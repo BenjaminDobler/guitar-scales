@@ -1,0 +1,94 @@
+<div class="neck-wrap">
+  <svg
+    class="neck"
+    [attr.viewBox]="'0 0 ' + width() + ' ' + height()"
+    [attr.width]="width()"
+    [attr.height]="height()"
+    role="img"
+    aria-label="Guitar fretboard"
+  >
+    <!-- Fretboard background -->
+    <rect
+      class="board"
+      [attr.x]="0"
+      [attr.y]="stringYs()[0] - 14"
+      [attr.width]="width()"
+      [attr.height]="stringYs()[stringYs().length - 1] - stringYs()[0] + 28"
+      rx="4"
+    />
+
+    <!-- Inlay dots -->
+    @for (dot of inlayDots(); track $index) {
+      <circle class="inlay" [attr.cx]="dot.cx" [attr.cy]="dot.cy" [attr.r]="dot.size" />
+    }
+
+    <!-- Position frame -->
+    @if (frameRect(); as f) {
+      <rect class="frame" [attr.x]="f.x" [attr.y]="f.y" [attr.width]="f.width" [attr.height]="f.height" rx="6" />
+    }
+
+    <!-- Frets -->
+    @for (line of fretLines(); track line.fret) {
+      <line
+        [class.nut]="line.fret === 0"
+        [class.fret-line]="line.fret !== 0"
+        [attr.x1]="line.x"
+        [attr.x2]="line.x"
+        [attr.y1]="stringYs()[0] - 14"
+        [attr.y2]="stringYs()[stringYs().length - 1] + 14"
+      />
+    }
+
+    <!-- Strings -->
+    @for (y of stringYs(); track $index) {
+      <line
+        class="string"
+        [attr.x1]="0"
+        [attr.x2]="width()"
+        [attr.y1]="y"
+        [attr.y2]="y"
+        [style.stroke-width]="1 + ($index * 0.4)"
+      />
+    }
+
+    <!-- Fret numbers -->
+    @for (label of fretNumbers(); track label.n) {
+      <text class="fret-num" [attr.x]="label.x" [attr.y]="label.y" text-anchor="middle">{{ label.n }}</text>
+    }
+
+    <!-- Note dots -->
+    @for (cell of notes(); track trackCell($index, cell)) {
+      @if (cell.isSelected || (cell.isHighlighted && cell.isInPosition)) {
+        <g
+          class="cell"
+          [class.root]="cell.isRoot"
+          [class.selected]="cell.isSelected"
+          [class.open]="cell.fret === 0"
+          [class.active]="cell.isActive"
+          (click)="onCellClick(cell)"
+        >
+          <circle [attr.cx]="cell.cx" [attr.cy]="cell.cy" r="12" />
+          <text [attr.x]="cell.cx" [attr.y]="cell.cy + 4" text-anchor="middle">{{ cell.name }}</text>
+        </g>
+      } @else if (cell.isHighlighted) {
+        <g
+          class="cell dim"
+          [class.root]="cell.isRoot"
+          [class.open]="cell.fret === 0"
+          [class.active]="cell.isActive"
+          (click)="onCellClick(cell)"
+        >
+          <circle [attr.cx]="cell.cx" [attr.cy]="cell.cy" r="9" />
+        </g>
+      } @else if (interactive()) {
+        <circle
+          class="hit-target"
+          [attr.cx]="cell.cx"
+          [attr.cy]="cell.cy"
+          r="13"
+          (click)="onCellClick(cell)"
+        />
+      }
+    }
+  </svg>
+</div>

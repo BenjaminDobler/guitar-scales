@@ -1,0 +1,147 @@
+<div class="app">
+  <header>
+    <h1>Guitar Scales</h1>
+    <div class="mode-toggle" role="tablist" aria-label="Mode">
+      <button
+        type="button"
+        role="tab"
+        [class.active]="mode() === 'scale'"
+        [attr.aria-selected]="mode() === 'scale'"
+        (click)="setMode('scale')"
+      >
+        Scale
+      </button>
+      <button
+        type="button"
+        role="tab"
+        [class.active]="mode() === 'lick'"
+        [attr.aria-selected]="mode() === 'lick'"
+        (click)="setMode('lick')"
+      >
+        Lick finder
+      </button>
+    </div>
+  </header>
+
+  <section class="controls">
+    @if (mode() === 'scale') {
+      <app-scale-picker
+        [root]="root()"
+        [scaleId]="scaleId()"
+        [useFlats]="useFlats()"
+        (rootChange)="root.set($event)"
+        (scaleIdChange)="scaleId.set($event)"
+        (useFlatsChange)="useFlats.set($event)"
+      />
+      <app-position-picker
+        [selection]="positionSelection()"
+        [positions]="availablePositions()"
+        [nps7Available]="nps7Available()"
+        (selectionChange)="onPositionSelectionChange($event)"
+      />
+    } @else {
+      <p class="lick-hint">
+        Click positions on the neck to mark a lick. Matching scales appear on the right.
+      </p>
+    }
+    <label class="tuning">
+      <span>Tuning</span>
+      <select [value]="tuningId()" (change)="onTuningChange($event)">
+        @for (t of tunings; track t.id) {
+          <option [value]="t.id">{{ t.name }}</option>
+        }
+      </select>
+    </label>
+  </section>
+
+  @if (mode() === 'scale') {
+    <section class="neck-actions">
+      <div class="display-toggle" role="tablist" aria-label="Display mode">
+        <button
+          type="button"
+          role="tab"
+          [class.active]="displayMode() === 'note'"
+          [attr.aria-selected]="displayMode() === 'note'"
+          (click)="setDisplayMode('note')"
+        >
+          Notes
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [class.active]="displayMode() === 'degree'"
+          [attr.aria-selected]="displayMode() === 'degree'"
+          (click)="setDisplayMode('degree')"
+        >
+          Degrees
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [class.active]="displayMode() === 'interval'"
+          [attr.aria-selected]="displayMode() === 'interval'"
+          (click)="setDisplayMode('interval')"
+        >
+          Intervals
+        </button>
+      </div>
+      <button type="button" class="play-scale" (click)="playScale()">▶ Play scale</button>
+      @if (activeChord()) {
+        <button type="button" class="play-scale" (click)="playActiveChord()">▶ Play chord</button>
+      }
+    </section>
+  }
+
+  <section class="neck">
+    <app-guitar-neck
+      [tuning]="tuning()"
+      [frets]="neckFrets"
+      [highlightedPitchClasses]="highlightedPitchClasses()"
+      [rootPitchClass]="rootForNeck()"
+      [selectedPositions]="neckSelected()"
+      [restrictToCells]="restrictToCells()"
+      [positionFrame]="positionFrame()"
+      [useFlats]="useFlats()"
+      [noteLabels]="noteLabels()"
+      [activePosition]="audio.currentScalePosition()"
+      [interactive]="true"
+      (positionClick)="onPositionClick($event)"
+    />
+  </section>
+
+  <section class="side">
+    @if (mode() === 'scale') {
+      <app-chord-list
+        [built]="built()"
+        [chords]="chords()"
+        [useFlats]="useFlats()"
+        [activeDegree]="activeDegree()"
+        [sourceScaleName]="chordSourceName()"
+        (degreeSelected)="onDegreeSelected($event)"
+      />
+      <hr class="divider" />
+      <app-backing-track
+        [chords]="chords()"
+        [progressionDegrees]="progressionDegrees()"
+        [bpm]="bpm()"
+        [groove]="groove()"
+        [drumsEnabled]="drumsEnabled()"
+        [isPlaying]="audio.isPlayingTrack()"
+        [currentStep]="audio.currentStep()"
+        (playToggled)="toggleBackingTrack()"
+        (bpmChanged)="setBpm($event)"
+        (progressionChanged)="setProgression($event)"
+        (presetSelected)="setProgression($event)"
+        (grooveChanged)="setGroove($event)"
+        (drumsToggled)="setDrumsEnabled($event)"
+      />
+    } @else {
+      <app-lick-finder
+        [notes]="lickNotes()"
+        [useFlats]="useFlats()"
+        (matchPicked)="onMatchPicked($event)"
+        (clearClicked)="onClearLick()"
+      />
+    }
+  </section>
+</div>

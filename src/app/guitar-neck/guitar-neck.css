@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.neck-wrap {
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+.neck {
+  display: block;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+.board {
+  fill: var(--neck-bg, #2a1a10);
+}
+
+.inlay {
+  fill: var(--inlay, #c9b58a);
+  opacity: 0.55;
+}
+
+.fret-line {
+  stroke: var(--fret, #b9b9b9);
+  stroke-width: 2;
+}
+
+.nut {
+  stroke: var(--nut, #f1ead7);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.string {
+  stroke: var(--string, #d8d3c1);
+  stroke-linecap: round;
+}
+
+.fret-num {
+  fill: var(--fret-num, #94a3b8);
+  font-size: 11px;
+}
+
+.cell {
+  cursor: pointer;
+}
+
+.cell circle {
+  fill: var(--note-bg, #38bdf8);
+  stroke: var(--note-stroke, #0f172a);
+  stroke-width: 1.5;
+  transition: transform 80ms ease;
+}
+
+.cell text {
+  fill: var(--note-fg, #0f172a);
+  font-size: 11px;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cell.root circle {
+  fill: var(--note-root-bg, #f97316);
+}
+
+.cell.root text {
+  fill: var(--note-root-fg, #1c1917);
+}
+
+.cell.selected circle {
+  fill: var(--note-selected-bg, #facc15);
+  stroke: var(--note-selected-stroke, #713f12);
+  stroke-width: 2;
+}
+
+.cell.open circle {
+  stroke-dasharray: 3 2;
+}
+
+.cell.dim circle {
+  fill: var(--note-dim-bg, #475569);
+  opacity: 0.45;
+  stroke: none;
+}
+
+.cell.dim.root circle {
+  fill: var(--note-root-dim-bg, #c2410c);
+  opacity: 0.55;
+}
+
+.cell.active circle {
+  fill: var(--note-active-bg, #fde047);
+  stroke: var(--note-active-stroke, #fef9c3);
+  stroke-width: 3;
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(253, 224, 71, 0.85));
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1.2);
+}
+
+.cell.active text {
+  fill: var(--note-active-fg, #1c1917);
+}
+
+.frame {
+  fill: var(--frame-fill, rgba(56, 189, 248, 0.07));
+  stroke: var(--frame-stroke, rgba(56, 189, 248, 0.5));
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.hit-target {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.hit-target:hover {
+  fill: rgba(148, 163, 184, 0.18);
+}
