@@ -1,59 +1,41 @@
-# GuitarScales
+# Guitar Scales
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.10.
+Interactive tool for exploring guitar scales, the chords they generate, and the scales that fit a given lick. Built with Angular 21 (zoneless, signals) and Tone.js.
 
-## Development server
+**Live: https://benjamindobler.github.io/guitar-scales/**
 
-To start a local development server, run:
+## Features
 
-```bash
-ng serve
-```
+- **Scale picker** with modes, minors, pentatonics, and blues; sharp/flat toggle.
+- **SVG fretboard** with multiple tunings (Standard, Drop D, DADGAD, Open G, half-step down, 7-string).
+- **Display modes** — show notes, scale degrees, or intervals on every fret position.
+- **Diatonic chord list** with roman numerals and 7th extensions. Pentatonic and blues scales fall back to their parent scale's chords (e.g. A minor pentatonic shows A Aeolian's i–VII).
+- **CAGED 5-box and 3-notes-per-string positions** with a translucent fret-window frame.
+- **Lick finder** — click positions on the neck to mark a melodic idea; the app lists every scale that contains those notes.
+- **Audio playback** — scale arpeggios, chord stabs, and a looping backing track. Playback uses the current tuning's lowest-string MIDI so register matches the instrument.
+- **Backing-track grooves** — Block, Rock 8ths, Shuffle, Ballad arp, and Bossa, each with a synthesized drum pattern (kick / snare / hi-hat). Drums can be toggled off.
+- **Playback highlighting** — the specific fret currently sounding pulses on the neck during scale playback.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Local development
 
 ```bash
-ng generate --help
+npm install
+npm start          # dev server on http://localhost:4200
+npm test           # Vitest
+npm run build      # production build via @angular/build (esbuild)
 ```
 
-## Building
+## Deployment
 
-To build the project run:
+GitHub Actions builds and deploys to GitHub Pages on every push to `main`. See `.github/workflows/deploy.yml`.
 
-```bash
-ng build
-```
+## Architecture
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Layered:
 
-## Running unit tests
+1. **`src/app/music/`** — pure TypeScript domain model (no Angular imports): pitch classes, scale definitions, chord classification, lick finder, position generation, tunings.
+2. **`src/app/audio/`** — Tone.js wrapper. Scale, chord, and backing-track playback live here; everything else stays free of audio concerns.
+3. **Components** — `guitar-neck`, `scale-picker`, `chord-list`, `lick-finder`, `position-picker`, `backing-track`. Each is OnPush, signal-based, and communicates only through the `App` shell.
+4. **`App` (`src/app/app.ts`)** — the only stateful component. Owns the signals and derives everything else with `computed()`.
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+See `CLAUDE.md` for the deeper design notes.
